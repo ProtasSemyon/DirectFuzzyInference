@@ -10,6 +10,10 @@ std::vector<std::string> Tokenizer::tokenize(const std::string& str) {
   const std::set<char> singleTokens{'{', '}', '(', ')', ',', '='};
 
   for (auto ch : str) {
+    if (ch == ' ') {
+      continue;
+    }
+
     if (ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z') {
       if (!numberToken.empty()) {
         tokens.emplace_back(std::move(numberToken));
