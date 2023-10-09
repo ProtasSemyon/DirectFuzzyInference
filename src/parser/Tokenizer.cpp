@@ -7,7 +7,7 @@ std::vector<std::string> Tokenizer::tokenize(const std::string& str) {
   std::string nameToken;
   std::string numberToken;
 
-  const std::set<char> singleTokens{'{', '}', '(', ')', ',', '='};
+  const std::set<char> singleTokens{'{', '}', '(', ')', ',', '=', '>'};
 
   for (auto ch : str) {
     if (ch == ' ') {
@@ -59,5 +59,21 @@ std::vector<std::string> Tokenizer::tokenize(const std::string& str) {
   if (!nameToken.empty()) {
     tokens.emplace_back(std::move(nameToken));
   }
-  return tokens;
+
+  std::vector<std::string> newTokens;
+
+  for (auto & token : tokens) {
+    if (token == ">") {
+      if (!newTokens.empty() && newTokens.back() == "=") {
+        newTokens.pop_back();
+        newTokens.emplace_back("=>");
+      } else {
+        throw std::invalid_argument("Unrecognized token");
+      }
+    } else {
+      newTokens.emplace_back(token);
+    }
+  }
+
+  return newTokens;
 }

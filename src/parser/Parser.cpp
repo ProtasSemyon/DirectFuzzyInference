@@ -1,9 +1,10 @@
 #include "Parser.hpp"
+
 #include <stdexcept>
 
 template <>
 FuzzySet Parser::parse(const std::vector<std::string> &tokens) {
-  std::string name = isSetNameValid(tokens.at(0)) ? tokens.at(0) : "";
+  const std::string name = isSetNameValid(tokens.at(0)) ? tokens.at(0) : "";
   if (name.empty()) {
     throw std::invalid_argument("Incorrect set name: " + tokens.at(0));
   }
@@ -59,10 +60,38 @@ FuzzySet Parser::parse(const std::vector<std::string> &tokens) {
   return FuzzySet(name, data);
 }
 
-// template <>
-// RelationMatrix Parser::parse(const std::vector<std::string> &tokens) {
-//   return {};
-// }
+template <>
+RelationMatrix Parser::parse(const std::vector<std::string> &tokens) {
+  const std::string name = isNameValid(tokens.at(0)) ? tokens.at(0) : "";
+  if (name.empty()) {
+    throw std::invalid_argument("Incorrect relation name: " + tokens.at(0));
+  }
+
+  if (tokens.size() != 7 || 
+      tokens.at(1) != "=" || 
+      tokens.at(2) != "(" || 
+      tokens.back() != ")" ||
+      tokens.at(4) != "=>" ||
+      !isSetNameValid(tokens.at(3)) ||
+      !isSetNameValid(tokens.at(5))) {
+    throw std::invalid_argument("Invalid relation declaration");
+  }
+
+  return RelationMatrix(name, tokens.at(3), tokens.at(5));
+}
+
+template <>
+Conclusion Parser::parse(const std::vector<std::string> &tokens) {
+  if (tokens.size() != 5 ||
+      tokens.at(0) != "{" ||
+      tokens.back() != "}" ||
+      tokens.at(2) != "," ||
+      !isSetNameValid(tokens.at(1)) ||
+      !isNameValid(tokens.at(3))) {
+        throw std::invalid_argument("Invalid conclusion declaration");
+      }
+  return Conclusion(tokens.at(1), tokens.at(3));
+}
 
 bool Parser::isSetNameValid(const std::string &name) {
   return name[0] >= 'A' && name[0] <= 'Z';

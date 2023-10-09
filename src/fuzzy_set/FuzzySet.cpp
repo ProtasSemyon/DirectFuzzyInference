@@ -1,7 +1,7 @@
 #include "FuzzySet.hpp"
 #include <iostream>
 
-FuzzySet::FuzzySet(std::string name, const std::map<std::string, double, std::less<>> & data) : data(data), setName(std::move(name)) {
+FuzzySet::FuzzySet(std::string name, const std::map<std::string, double, std::less<>> & data) : data(data), name(std::move(name)) {
 }
 
 void FuzzySet::addElement(const std::string& key, double value) {
@@ -9,7 +9,7 @@ void FuzzySet::addElement(const std::string& key, double value) {
 }
 
 std::ostream& operator<<(std::ostream& os, const FuzzySet& set) {
-  os << set.setName;
+  os << set.name;
   os << " = { ";
 
   size_t index = 0;
@@ -25,5 +25,19 @@ std::ostream& operator<<(std::ostream& os, const FuzzySet& set) {
   os << " }" << std::endl;
   return os; 
 }
+
+std::map<std::string, double, std::less<>> FuzzySet::getData() const {
+  return data;
+}
+
+std::string FuzzySet::getName() const {
+  return name;
+}
+
+void FuzzySet::setName(std::string newName) {
+  name = newName;
+}
+
+
 
 

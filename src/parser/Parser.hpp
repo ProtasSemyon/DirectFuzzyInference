@@ -1,9 +1,11 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 #include "fuzzy_set/FuzzySet.hpp"
 #include "relation_matrix/RelationMatrix.hpp"
+#include "conclusion/Conclusion.hpp"
 
 class Parser {
 public:
