@@ -1,12 +1,16 @@
+//////////////////////////////////////////////////////////////////////////////////////
+// Лабораторная работа 4 по дисциплине ЛОИС
+// Выполнена студентами группы 021701 БГУИР
+// Протас С.А. и Рудьман И.О. - разработали код
+// Вариант 22 - Реализовать прямой нечеткий логический вывод, используея импликацию Гогена
+// 10.10.2023
+// Использованные материалы:
+// "Нечеткий логический вывод в системе принятия решений" А. А. Ахрем, М. Р. Ашинянц. С. А. Петров
+// https://habr.com/ru/post/111187/ - Прямой нечеткий логический вывод
+
 #include "DirectFuzzyInference.hpp"
 #include <fstream>
 #include <iostream>
-
-
-DirectFuzzyInference::DirectFuzzyInference(const std::string& inFile) {
-  read(inFile);
-}
-
 
 void DirectFuzzyInference::read(const std::string &filename) {
   std::ifstream stream(filename);
@@ -36,7 +40,6 @@ void DirectFuzzyInference::readRelationMatrix(std::ifstream& stream) {
 
   while (!buf.empty()) {
     auto rel = std::make_shared<RelationMatrix>(Parser::parse<RelationMatrix>(Tokenizer::tokenize(buf)));
-    rel->initialize(fuzzySets[rel->getXSetName()], fuzzySets[rel->getYSetName()]);
     rels[rel->getName()] = rel;
     std::getline(stream, buf);
   }
@@ -48,7 +51,6 @@ void DirectFuzzyInference::readConclusion(std::ifstream& stream) {
 
   while (!buf.empty()) {
     auto concl = std::make_shared<Conclusion>(Parser::parse<Conclusion>(Tokenizer::tokenize(buf)));
-    concl->initialize(fuzzySets[concl->getSetName()], rels[concl->getRelName()]);
     conclusions.emplace_back(concl);
     std::getline(stream, buf);
   }
@@ -67,3 +69,12 @@ void DirectFuzzyInference::printResultInConsole() const {
   }  
 }
 
+void DirectFuzzyInference::process() {
+  for (const auto &[relName, rel] : rels) {
+    rel->initialize(fuzzySets[rel->getXSetName()], fuzzySets[rel->getYSetName()]);
+  }
+
+  for (const auto &concl : conclusions) {
+    concl->initialize(fuzzySets[concl->getSetName()], rels[concl->getRelName()]);
+  }
+}
